@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Data</title>
+</head>
+<body>
+    <h1>Input Nama dan Nomor HP</h1>
+    <form id="formData">
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama" required>
+        <br><br>
+        <label for="nomorHp">Nomor HP:</label>
+        <input type="text" id="nomorHp" name="nomorHp" required>
+        <br><br>
+        <button type="submit">Simpan</button>
+    </form>
+    <script>
+        // Fungsi untuk menyimpan data ke Local Storage
+        document.getElementById("formData").addEventListener("submit", function (e) {
+            e.preventDefault(); // Mencegah reload halaman
+
+            const nama = document.getElementById("nama").value;
+            const nomorHp = document.getElementById("nomorHp").value;
+
+            // Ambil data lama dari Local Storage atau buat array baru
+            const data = JSON.parse(localStorage.getItem("dataNama")) || [];
+
+            // Tambahkan data baru
+            data.push({ nama, nomorHp });
+
+            // Simpan kembali ke Local Storage
+            localStorage.setItem("dataNama", JSON.stringify(data));
+
+            // Arahkan ke halaman tampilkan.html
+            window.location.href = "tampilkan.html";
+        });
+    </script>
+</body>
+</html>
