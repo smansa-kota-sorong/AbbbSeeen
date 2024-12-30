@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabel Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tabel Data Nama dan Nomor HP</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Nomor HP</th>
+            </tr>
+        </thead>
+        <tbody id="tabelData">
+            <!-- Data akan ditambahkan di sini -->
+        </tbody>
+    </table>
+    <br>
+    <button onclick="kembali()">Kembali ke Halaman Input</button>
+
+    <script>
+        // Fungsi untuk menampilkan data dari Local Storage
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem("dataNama")) || [];
+            const tabelData = document.getElementById("tabelData");
+
+            // Kosongkan tabel
+            tabelData.innerHTML = "";
+
+            // Tambahkan data ke tabel
+            data.forEach((item, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.nama}</td>
+                    <td>${item.nomorHp}</td>
+                `;
+                tabelData.appendChild(row);
+            });
+        }
+
+        // Fungsi kembali ke halaman input
+        function kembali() {
+            window.location.href = "index.html";
+        }
+
+        // Muat data saat halaman dibuka
+        loadData();
+    </script>
+</body>
+</html>
