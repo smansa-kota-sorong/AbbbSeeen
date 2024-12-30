@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabel Data</title>
+    <title>Tabel Data Siswa</title>
     <style>
         table {
             width: 100%;
@@ -16,16 +16,25 @@
             padding: 10px;
             text-align: left;
         }
+        .edit-button {
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h1>Tabel Data Nama dan Nomor HP</h1>
+    <h1>Tabel Data Siswa</h1>
     <table>
         <thead>
             <tr>
                 <th>No</th>
                 <th>Nama</th>
+                <th>Kelas</th>
+                <th>Jenis Kelamin</th>
                 <th>Nomor HP</th>
+                <th>Tanggal Input</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody id="tabelData">
@@ -33,35 +42,36 @@
         </tbody>
     </table>
     <br>
-    <button onclick="kembali()">Kembali ke Halaman Input</button>
+    <button onclick="kembali()">Tambah Data</button>
 
     <script>
-        // Fungsi untuk menampilkan data dari Local Storage
         function loadData() {
-            const data = JSON.parse(localStorage.getItem("dataNama")) || [];
+            const data = JSON.parse(localStorage.getItem("dataSiswa")) || [];
             const tabelData = document.getElementById("tabelData");
 
-            // Kosongkan tabel
             tabelData.innerHTML = "";
 
-            // Tambahkan data ke tabel
             data.forEach((item, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${item.nama}</td>
+                    <td>${item.kelas}</td>
+                    <td>${item.jenisKelamin}</td>
                     <td>${item.nomorHp}</td>
+                    <td>${item.tanggalInput}</td>
+                    <td>
+                        <a href="edit_data.html?index=${index}" class="edit-button">Edit</a>
+                    </td>
                 `;
                 tabelData.appendChild(row);
             });
         }
 
-        // Fungsi kembali ke halaman input
         function kembali() {
-            window.location.href = "index.html";
+            window.location.href = "tambah_nama.html";
         }
 
-        // Muat data saat halaman dibuka
         loadData();
     </script>
 </body>
