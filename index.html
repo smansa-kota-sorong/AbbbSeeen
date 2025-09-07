@@ -69,6 +69,21 @@
             -ms-user-select: text !important;
             user-select: text !important;
         }
+        
+        /* Enable dropdown functionality */
+        select {
+            -webkit-appearance: menulist !important;
+            -moz-appearance: menulist !important;
+            appearance: menulist !important;
+            cursor: pointer !important;
+        }
+        
+        select option {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen" oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
@@ -1861,20 +1876,32 @@
 
         // Copy protection functions
         function disableCopyPaste() {
-            // Disable right-click context menu
+            // Disable right-click context menu but allow for form elements
             document.addEventListener('contextmenu', function(e) {
+                // Allow context menu for form elements
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+                    return true;
+                }
                 e.preventDefault();
                 return false;
             });
             
-            // Disable text selection
+            // Disable text selection but allow for form elements
             document.addEventListener('selectstart', function(e) {
+                // Allow selection for form elements
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'OPTION') {
+                    return true;
+                }
                 e.preventDefault();
                 return false;
             });
             
-            // Disable drag and drop
+            // Disable drag and drop but allow form interactions
             document.addEventListener('dragstart', function(e) {
+                // Allow drag for form elements if needed
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+                    return true;
+                }
                 e.preventDefault();
                 return false;
             });
@@ -1942,12 +1969,20 @@
                 }
             });
             
-            // Disable mouse selection
-            document.onselectstart = function() {
+            // Disable mouse selection but allow dropdowns
+            document.onselectstart = function(e) {
+                // Allow selection for input and select elements
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+                    return true;
+                }
                 return false;
             };
             
-            document.onmousedown = function() {
+            document.onmousedown = function(e) {
+                // Allow mouse events for input and select elements
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'OPTION') {
+                    return true;
+                }
                 return false;
             };
             
@@ -1970,5 +2005,5 @@
         // Fallback initialization
         init();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b6781ba4986141',t:'MTc1NzI1MDg2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b917a2c1226045',t:'MTc1NzI3ODM3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
