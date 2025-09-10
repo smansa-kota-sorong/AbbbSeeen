@@ -168,7 +168,39 @@
                         <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calendar mr-2 text-blue-500"></i>Pilih Tanggal
                         </label>
-                        <input type="date" id="tanggal-absensi" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Tanggal</label>
+                                <select id="tanggal-hari" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <!-- Days will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Bulan</label>
+                                <select id="tanggal-bulan" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option value="1">01</option>
+                                    <option value="2">02</option>
+                                    <option value="3">03</option>
+                                    <option value="4">04</option>
+                                    <option value="5">05</option>
+                                    <option value="6">06</option>
+                                    <option value="7">07</option>
+                                    <option value="8">08</option>
+                                    <option value="9">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Tahun</label>
+                                <select id="tanggal-tahun" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" id="tanggal-absensi">
                     </div>
                     
                     <div>
@@ -316,7 +348,39 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calendar mr-2 text-blue-500"></i>Pilih Tanggal
                         </label>
-                        <input type="date" id="rekap-tanggal" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Tanggal</label>
+                                <select id="rekap-tanggal-hari" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <!-- Days will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Bulan</label>
+                                <select id="rekap-tanggal-bulan" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option value="1">01</option>
+                                    <option value="2">02</option>
+                                    <option value="3">03</option>
+                                    <option value="4">04</option>
+                                    <option value="5">05</option>
+                                    <option value="6">06</option>
+                                    <option value="7">07</option>
+                                    <option value="8">08</option>
+                                    <option value="9">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Tahun</label>
+                                <select id="rekap-tanggal-tahun" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" id="rekap-tanggal">
                     </div>
                     
                     <div>
@@ -469,8 +533,141 @@
         // Set default date to today
         function setDefaultDate() {
             const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0];
-            document.getElementById('tanggal-absensi').value = formattedDate;
+            const currentDay = today.getDate();
+            const currentMonth = today.getMonth() + 1;
+            const currentYear = today.getFullYear();
+            
+            // Use 2025 as default year regardless of current year
+            const defaultYear = 2025;
+            
+            // For 2025, default to July (month 7) since it starts from July
+            const defaultMonth = 7;
+            
+            // Populate month dropdown first (with year restrictions)
+            populateMonthDropdown('tanggal-bulan', defaultYear);
+            
+            // Populate day dropdown
+            populateDayDropdown('tanggal-hari', defaultMonth, defaultYear);
+            
+            // Set current values - for July 2025, use 14 as minimum
+            let defaultDay = currentDay;
+            if (defaultYear === 2025 && defaultMonth === 7 && currentDay < 14) {
+                defaultDay = 14; // Use 14 as minimum for July 2025
+            }
+            
+            document.getElementById('tanggal-hari').value = defaultDay;
+            document.getElementById('tanggal-bulan').value = defaultMonth;
+            document.getElementById('tanggal-tahun').value = defaultYear;
+            
+            // Update hidden field
+            updateHiddenDateField('tanggal-absensi', 'tanggal-hari', 'tanggal-bulan', 'tanggal-tahun');
+            
+            // Add event listeners for date changes
+            document.getElementById('tanggal-hari').addEventListener('change', function() {
+                updateHiddenDateField('tanggal-absensi', 'tanggal-hari', 'tanggal-bulan', 'tanggal-tahun');
+            });
+            
+            document.getElementById('tanggal-bulan').addEventListener('change', function() {
+                const selectedMonth = parseInt(this.value);
+                const selectedYear = parseInt(document.getElementById('tanggal-tahun').value);
+                populateDayDropdown('tanggal-hari', selectedMonth, selectedYear);
+                updateHiddenDateField('tanggal-absensi', 'tanggal-hari', 'tanggal-bulan', 'tanggal-tahun');
+            });
+            
+            document.getElementById('tanggal-tahun').addEventListener('change', function() {
+                const selectedMonth = parseInt(document.getElementById('tanggal-bulan').value);
+                const selectedYear = parseInt(this.value);
+                populateMonthDropdown('tanggal-bulan', selectedYear);
+                populateDayDropdown('tanggal-hari', selectedMonth, selectedYear);
+                updateHiddenDateField('tanggal-absensi', 'tanggal-hari', 'tanggal-bulan', 'tanggal-tahun');
+            });
+        }
+        
+        // Populate month dropdown based on selected year
+        function populateMonthDropdown(monthSelectId, year) {
+            const monthSelect = document.getElementById(monthSelectId);
+            const currentValue = monthSelect.value;
+            
+            // Clear existing options
+            monthSelect.innerHTML = '';
+            
+            // Determine month range based on year
+            let startMonth = 1;
+            let endMonth = 12;
+            
+            if (year === 2025) {
+                startMonth = 7; // Start from July for 2025
+                endMonth = 12; // Up to December for 2025
+            } else if (year === 2026) {
+                startMonth = 1; // Start from January for 2026
+                endMonth = 6; // Only up to June for 2026
+            }
+            
+            // Populate months
+            for (let month = startMonth; month <= endMonth; month++) {
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = month.toString().padStart(2, '0');
+                monthSelect.appendChild(option);
+            }
+            
+            // Restore previous value if valid
+            if (currentValue && currentValue >= startMonth && currentValue <= endMonth) {
+                monthSelect.value = currentValue;
+            } else {
+                monthSelect.value = startMonth; // Default to first available month
+            }
+        }
+        
+        // Populate day dropdown based on selected month
+        function populateDayDropdown(daySelectId, month, year) {
+            const daySelect = document.getElementById(daySelectId);
+            const currentValue = daySelect.value;
+            
+            // Clear existing options
+            daySelect.innerHTML = '';
+            
+            // Get number of days in the month
+            let daysInMonth = new Date(year, month, 0).getDate();
+            
+            // Apply special limits for specific year-month combinations
+            if (year === 2025 && month === 7) {
+                // For July 2025, start from 14th and go to 31st
+                // We'll handle the start date in the loop below
+            }
+            
+            // Determine start day based on year-month combination
+            let startDay = 1;
+            if (year === 2025 && month === 7) {
+                startDay = 14; // Start from 14th July for 2025
+            }
+            
+            // Populate days
+            for (let day = startDay; day <= daysInMonth; day++) {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day;
+                daySelect.appendChild(option);
+            }
+            
+            // Restore previous value if valid
+            if (currentValue && currentValue >= startDay && currentValue <= daysInMonth) {
+                daySelect.value = currentValue;
+            } else {
+                daySelect.value = startDay; // Default to first available day
+            }
+        }
+        
+        // Update hidden date field
+        function updateHiddenDateField(hiddenFieldId, daySelectId, monthSelectId, yearSelectId) {
+            const day = document.getElementById(daySelectId).value;
+            const month = document.getElementById(monthSelectId).value;
+            const year = document.getElementById(yearSelectId).value;
+            
+            if (day && month && year) {
+                const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                document.getElementById(hiddenFieldId).value = formattedDate;
+            }
         }
 
         // Update date and time
@@ -923,8 +1120,57 @@
         // Set default date for rekap to today
         function setDefaultRekapDate() {
             const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0];
-            document.getElementById('rekap-tanggal').value = formattedDate;
+            const currentDay = today.getDate();
+            const currentMonth = today.getMonth() + 1;
+            const currentYear = today.getFullYear();
+            
+            // Use 2025 as default year regardless of current year
+            const defaultYear = 2025;
+            
+            // For 2025, default to July (month 7) since it starts from July
+            const defaultMonth = 7;
+            
+            // Populate month dropdown first (with year restrictions)
+            populateMonthDropdown('rekap-tanggal-bulan', defaultYear);
+            
+            // Populate day dropdown for rekap
+            populateDayDropdown('rekap-tanggal-hari', defaultMonth, defaultYear);
+            
+            // Set current values - for July 2025, use 14 as minimum
+            let defaultDay = currentDay;
+            if (defaultYear === 2025 && defaultMonth === 7 && currentDay < 14) {
+                defaultDay = 14; // Use 14 as minimum for July 2025
+            }
+            
+            document.getElementById('rekap-tanggal-hari').value = defaultDay;
+            document.getElementById('rekap-tanggal-bulan').value = defaultMonth;
+            document.getElementById('rekap-tanggal-tahun').value = defaultYear;
+            
+            // Update hidden field
+            updateHiddenDateField('rekap-tanggal', 'rekap-tanggal-hari', 'rekap-tanggal-bulan', 'rekap-tanggal-tahun');
+            
+            // Add event listeners for rekap date changes
+            document.getElementById('rekap-tanggal-hari').addEventListener('change', function() {
+                updateHiddenDateField('rekap-tanggal', 'rekap-tanggal-hari', 'rekap-tanggal-bulan', 'rekap-tanggal-tahun');
+                loadRekapData(); // Auto-reload data when date changes
+            });
+            
+            document.getElementById('rekap-tanggal-bulan').addEventListener('change', function() {
+                const selectedMonth = parseInt(this.value);
+                const selectedYear = parseInt(document.getElementById('rekap-tanggal-tahun').value);
+                populateDayDropdown('rekap-tanggal-hari', selectedMonth, selectedYear);
+                updateHiddenDateField('rekap-tanggal', 'rekap-tanggal-hari', 'rekap-tanggal-bulan', 'rekap-tanggal-tahun');
+                loadRekapData(); // Auto-reload data when date changes
+            });
+            
+            document.getElementById('rekap-tanggal-tahun').addEventListener('change', function() {
+                const selectedMonth = parseInt(document.getElementById('rekap-tanggal-bulan').value);
+                const selectedYear = parseInt(this.value);
+                populateMonthDropdown('rekap-tanggal-bulan', selectedYear);
+                populateDayDropdown('rekap-tanggal-hari', selectedMonth, selectedYear);
+                updateHiddenDateField('rekap-tanggal', 'rekap-tanggal-hari', 'rekap-tanggal-bulan', 'rekap-tanggal-tahun');
+                loadRekapData(); // Auto-reload data when date changes
+            });
         }
 
         // Filter rekap data based on selected date and period
@@ -2006,5 +2252,5 @@
         // Fallback initialization
         init();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97cf5e238720ca4b',t:'MTc1NzUxMTk0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97cf7905473aca4b',t:'MTc1NzUxMzA0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
